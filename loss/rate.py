@@ -82,7 +82,6 @@ class DecayScheduler():
                 + 'base_lr=%0.3f, decay=%0.3f, step=%0.3f'%(self.base_lr, self.decay, self.step)
         return string
 
-
 # 'Cyclical Learning Rates for Training Neural Networks'- Leslie N. Smith, arxiv 2017
 #       https://arxiv.org/abs/1506.01186
 #       https://github.com/bckenstler/CLR
@@ -97,10 +96,6 @@ class CyclicScheduler0():
         self.period = period
 
     def __call__(self, time):
-
-        #sawtooth
-        #r = (1-(time%self.period)/self.period)
-
         #cosine
         time= time%self.period
         r = (np.cos(time/self.period *PI)+1)/2
@@ -142,8 +137,6 @@ class CyclicScheduler1():
         lr = min_lr + r*(max_lr-min_lr)
 
         return lr
-
-
 
     def __str__(self):
         string = 'CyclicScheduler\n' \
@@ -218,7 +211,6 @@ def get_learning_rate(optimizer):
     lr = lr[0]
 
     return lr
-
 
 # main #################################################################
 if __name__ == '__main__':
