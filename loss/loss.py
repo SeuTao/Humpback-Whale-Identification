@@ -88,7 +88,6 @@ class TripletLoss(object):
 
         return loss
 
-
 def softmax_loss(results, labels):
     labels = labels.view(-1)
     loss = F.cross_entropy(results, labels, reduce=True)

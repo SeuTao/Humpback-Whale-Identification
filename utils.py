@@ -2,7 +2,7 @@ from include import *
 from torch.autograd import Variable
 import torch
 import numpy as np
-
+from process.data_helper import *
 
 def save(list_or_dict,name):
     f = open(name, 'w')
@@ -36,7 +36,6 @@ def metric(prob, label, thres = 0.5):
     precision , top5 = top_n_np(prob_tmp, label)
     return  precision, top5
 
-
 def top_n_np(preds, labels):
     n = 5
     predicted = np.fliplr(preds.argsort(axis=1)[:, -n:])
@@ -50,28 +49,51 @@ def top_n_np(preds, labels):
             re += np.sum(labels_tmp == predicted_tmp[n_]) / (n_ + 1.0)
 
     re = re / len(preds)
-
     for i in range(n):
         top5.append(np.sum(labels == predicted[:, i])/ (1.0*len(labels)))
-
     return re, top5
 
-# def load_train_map(train_image_list_path = r'/data2/shentao/Projects/Kaggle_Whale/image_list/train_image_list.txt'):
-#     f = open(train_image_list_path, 'r')
-#     lines = f.readlines()
-#     f.close()
-#
-#     label_dict = {}
-#     for line in lines:
-#         line = line.strip()
-#         line = line.split(' ')
-#         img_name = line[0]
-#         index = int(line[1])
-#         id = line[2]
-#         label_dict[img_name] = [index,id]
-#
-#     return label_dict
 
-# if __name__ == '__main__':
-#     dict = load_train_map()
-#     print(dict)
+def prob_to_csv_top5(prob, key_id, name):
+    CLASS_NAME,_ = load_CLASS_NAME()
+
+    prob = np.asarray(prob)
+    print(prob.shape)
+
+    top = np.argsort(-prob,1)[:,:5]
+    word = []
+    index = 0
+
+    rs = []
+
+    for (t0,t1,t2,t3,t4) in top:
+        word.append(
+            CLASS_NAME[t0] + ' ' + \
+            CLASS_NAME[t1] + ' ' + \
+            CLASS_NAME[t2])
+
+        top_k_label_name = r''
+        label = CLASS_NAME[t0]
+        score = prob[index][t0]
+        top_k_label_name += label + ' ' + str(score) + ' '
+
+        label = CLASS_NAME[t1]
+        score = prob[index][t1]
+        top_k_label_name += label + ' ' + str(score) + ' '
+
+        label = CLASS_NAME[t2]
+        score = prob[index][t2]
+        top_k_label_name += label + ' ' + str(score) + ' '
+
+        label = CLASS_NAME[t3]
+        score = prob[index][t3]
+        top_k_label_name += label + ' ' + str(score) + ' '
+
+        label = CLASS_NAME[t4]
+        score = prob[index][t4]
+        top_k_label_name += label + ' ' + str(score) + ' '
+
+        rs.append(top_k_label_name)
+        index += 1
+
+    pd.DataFrame({'key_id':key_id, 'word':rs}).to_csv( '{}.csv'.format(name), index=None)

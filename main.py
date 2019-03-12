@@ -7,15 +7,16 @@ from process.triplet_sampler import *
 from loss.loss import  softmax_loss, TripletLoss, focal_OHEM
 
 whale_id_num = 5004
-class_num = whale_id_num*2
+class_num = whale_id_num * 2
 
 def get_model(model, config):
-    if model == 'seresnet101':
+
+    if model == 'resnet101':
+        from net.model_resnet101 import Net
+    elif model == 'seresnet101':
         from net.model_seresnet101 import Net
     elif model == 'seresnext101':
         from net.model_seresnext101 import Net
-    elif model == 'resnet101':
-        from net.model_resnet101 import Net
 
     net = Net(num_class=class_num, s1 = config.s1 , m1 = config.m1, s2 = config.s2)
     return net
@@ -45,9 +46,7 @@ def do_valid(net, valid_loader, hard_ratio, is_flip = False):
             logit, _, feas = net(input, label = None, is_infer = True)
             loss = focal_OHEM(logit, truth_, truth, hard_ratio)
 
-            # prob = F.sigmoid(logit)
             prob = torch.sigmoid(logit)
-
             prob  = prob.data.cpu().numpy()
             label = truth_.data.cpu().numpy()
 
@@ -118,6 +117,13 @@ def run_train(config):
     NUM_INSTANCE = 4
 
     ## setup  -----------------------------------------------------------------------------
+    if config.is_pseudo:
+        config.model_name = config.model + '_fold' + str(config.fold_index) + '_pseudo'\
+                            '_' + str(config.image_h) + '_' + str(config.image_w)
+    else:
+        config.model_name = config.model + '_fold' + str(config.fold_index) + \
+                            '_'+str(config.image_h)+ '_'+str(config.image_w)
+
     out_dir = os.path.join('./models/', config.model_name)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -133,22 +139,20 @@ def run_train(config):
     else:
         initial_checkpoint = None
 
-    train_dataset = WhaleDataset('train', fold_index=0, image_size=image_size,is_pseudo=False)
+    train_dataset = WhaleDataset('train', fold_index=config.fold_index, image_size=image_size,is_pseudo=config.is_pseudo)
 
-    train_list = WhaleDataset('train_list', fold_index=0, image_size=image_size, is_pseudo=False)
+    train_list = WhaleDataset('train_list', fold_index=config.fold_index, image_size=image_size, is_pseudo=config.is_pseudo)
 
-    valid_dataset = WhaleDataset('val', fold_index=0, image_size=image_size,
-                                 augment=[0.0, 0.05, 0.05, 0.05, 0.05],is_flip=False)
+    valid_dataset = WhaleDataset('val', fold_index=config.fold_index, image_size=image_size, augment=[0.0], is_flip=False)
 
     valid_loader  = DataLoader(valid_dataset,
-                                shuffle = False,
-                                batch_size  = batch_size,
-                                drop_last   = False,
-                                num_workers = 16,
-                                pin_memory  = True)
+                               shuffle = False,
+                               batch_size  = batch_size,
+                               drop_last   = False,
+                               num_workers = 16,
+                               pin_memory  = True)
 
-    valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
-                                 augment=[0.0, 0.05, 0.05, 0.05, 0.05],is_flip=True)
+    valid_dataset_flip = WhaleDataset('val', fold_index=config.fold_index, image_size=image_size, augment=[0.0], is_flip=True)
 
     valid_loader_flip  = DataLoader(valid_dataset_flip,
                                     shuffle = False,
@@ -158,8 +162,7 @@ def run_train(config):
                                     pin_memory  = True)
 
     net = get_model(config.model, config)
-    ## optimiser ----------------------------------
-
+    ##-----------------------------------------------------------------------------------------------------------
     if 1:
         for p in net.basemodel.layer0.parameters(): p.requires_grad = False
         for p in net.basemodel.layer1.parameters(): p.requires_grad = False
@@ -176,7 +179,7 @@ def run_train(config):
     log.write('\t  ... xxx baseline  ... \n')
     log.write('\n')
 
-    ## dataset ----------------------------------------
+    ##-----------------------------------------------------------------------------------------------------------
     log.write('** dataset setting **\n')
     assert(len(train_dataset)>=batch_size)
     log.write('batch_size = %d\n'%(batch_size))
@@ -194,7 +197,11 @@ def run_train(config):
     log.write('%s\n'%(type(net)))
     log.write('\n')
 
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, net.parameters()), lr=base_lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.0002)
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, net.parameters()),
+                                 lr=base_lr,
+                                 betas=(0.9, 0.999),
+                                 eps=1e-08,
+                                 weight_decay=0.0002)
 
     iter_smooth = 20
     start_iter = 0
@@ -232,7 +239,7 @@ def run_train(config):
         log.write('\n')
 
         train_loader = DataLoader(train_dataset,
-                                  sampler=WhaleRandomIdentitySampler(train_list,
+                                  sampler = WhaleRandomIdentitySampler(train_list,
                                                                      batch_size,
                                                                      NUM_INSTANCE,
                                                                      NW_ratio=0.25),
@@ -348,10 +355,18 @@ def run_train(config):
             log.write('\n')
             torch.save(net.state_dict(), out_dir + '/checkpoint/max_valid_model.pth')
 
-def run_infer_classifier(config):
+def run_infer(config):
     batch_size = config.batch_size
     image_size = (config.image_h, config.image_w)
+
     ## setup  -----------------------------------------------------------------------------
+    if config.is_pseudo:
+        config.model_name = config.model + '_fold' + str(config.fold_index) + '_pseudo'\
+                            '_' + str(config.image_h) + '_' + str(config.image_w)
+    else:
+        config.model_name = config.model + '_fold' + str(config.fold_index) + \
+                            '_'+str(config.image_h)+ '_'+str(config.image_w)
+
     out_dir = os.path.join('./models/', config.model_name)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -390,17 +405,16 @@ def run_infer_classifier(config):
                                num_workers = 8,
                                pin_memory  = True)
 
-    valid_dataset_flip = WhaleDataset('val', fold_index=0,
-                                 image_size=image_size,
-                                 augment=[0.0],
-                                 is_flip=True)
+    valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
+                                      augment=[0.0],
+                                      is_flip=True)
 
     valid_loader_flip = DataLoader(valid_dataset_flip,
-                              shuffle=False,
-                              batch_size=batch_size,
-                              drop_last=False,
-                              num_workers=8,
-                              pin_memory=True)
+                                   shuffle=False,
+                                   batch_size=batch_size,
+                                   drop_last=False,
+                                   num_workers=8,
+                                   pin_memory=True)
 
 
     valid_loss = do_valid(net, valid_loader,  hard_ratio= 1 * 1e-2, is_flip=False)
@@ -435,7 +449,7 @@ def run_infer_classifier(config):
             prob = F.sigmoid(logit)
 
             if augments[index][0] == 0.0:
-                prob = prob[:, 0:whale_id_num]
+                prob = prob[:, :whale_id_num]
             elif augments[index][0] == 1.0:
                 prob = prob[:, whale_id_num:]
 
@@ -453,15 +467,14 @@ def main(config):
     if config.mode == 'train':
         run_train(config)
 
-    if config.mode == 'test_classifier':
+    if config.mode == 'test':
         with torch.no_grad():
-            run_infer_classifier(config)
+            run_infer(config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_fold_index', type=int, default = 0)
+    parser.add_argument('--fold_index', type=int, default = 0)
     parser.add_argument('--model', type=str, default='seresnet101')
-    parser.add_argument('--model_name', type=str, default='_')
     parser.add_argument('--batch_size', type=int, default=128)
 
     parser.add_argument('--image_h', type=int, default=256)
@@ -475,7 +488,8 @@ if __name__ == '__main__':
     parser.add_argument('--softmax_w', type=float, default=0.1)
     parser.add_argument('--triplet_w', type=float, default=1.0)
 
-    parser.add_argument('--mode', type=str, default='train', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
+    parser.add_argument('--is_pseudo', type=bool, default=True)
+    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
     parser.add_argument('--pretrained_model', type=str, default=None)
 
     # parser.add_argument('--mode', type=str, default='test_classifier', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])

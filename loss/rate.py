@@ -191,9 +191,6 @@ class CyclicScheduler():
 
 class NullScheduler():
     def __init__(self, lr=0.01 ):
-        # super(NullScheduler, self).__init__()
-        # super(NullScheduler, self).__init__()
-
         self.lr    = lr
         self.cycle = 0
 
@@ -228,11 +225,7 @@ if __name__ == '__main__':
     print( '%s: calling main function ... ' % os.path.basename(__file__))
 
     num_iters=10000
-    #scheduler = StepScheduler([ (0,0.1),  (10,0.01),  (25,0.005),  (35,0.001), (40,0.0001), (43,-1)])
-    #scheduler = DecayScheduler(base_lr=0.1, decay=0.32, step=10)
     scheduler = CyclicScheduler(min_lr=0.0001, max_lr=0.01, period=30., warm_start=5) ##exp_range ##triangular2
-    #scheduler = CyclicScheduler([ (0,0.1),  (25,0.01),  (45,0.005)], period=50., warm_start=5) ##exp_range ##triangular2
-
     lrs = np.zeros((num_iters),np.float32)
     for iter in range(num_iters):
 
@@ -242,13 +235,3 @@ if __name__ == '__main__':
             num_iters = iter
             break
         print ('iter=%02d,  lr=%f   %d'%(iter,lr, scheduler.cycle))
-
-
-    #plot
-    # fig = plt.figure()
-    # plot_rates(fig, lrs, title=str(scheduler))
-    # plt.show()
-
-
-#  https://github.com/Jiaming-Liu/pytorch-lr-scheduler/blob/master/lr_scheduler.py
-#  PVANET plateau lr policy
