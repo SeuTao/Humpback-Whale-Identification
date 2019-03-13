@@ -15,7 +15,7 @@ from bbox_model.helper.keypoint_encoder import KeypointEncoder
 import pandas as pd
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 def compute_keypoints(config, img0, net, encoder, doflip=False):
     img_h, img_w, _ = img0.shape
@@ -73,12 +73,11 @@ if __name__ == '__main__':
     checkpoint = torch.load(args.model)  # must before cuda
     net.load_state_dict(checkpoint['state_dict'])
     net = net.cuda()
-    # cudnn.benchmark = True
+
     net = DataParallel(net)
     net.eval()
     encoder = KeypointEncoder()
     nes = []
-
     img_id = []
     keypoint_word = []
 
@@ -90,8 +89,6 @@ if __name__ == '__main__':
         img_path = os.path.join(TST_IMGS_DIR, img_path_)
         if not os.path.exists(img_path):
             img_path = os.path.join(TRN_IMGS_DIR, img_path_)
-
-        # print(img_path)
 
         img0 = cv2.imread(img_path)  #X
         img0_flip = cv2.flip(img0, 1)
@@ -106,13 +103,8 @@ if __name__ == '__main__':
         x, y = encoder.decode_np(hm_pred + hm_pred2, scale, config.hm_stride, (img_w/2, img_h/2), method='maxoffset')
         keypoints = np.stack([x, y, np.ones(x.shape)], axis=1).astype(np.int16)
         bbox = pts2bbox(keypoints)
+
 # ----------------------------------------------------------------------------------------------------------------------
-
-        if args.vis:
-            kp_img = draw_keypoints(img0, keypoints)
-            cv2.rectangle(kp_img, (bbox[0],bbox[1]),(bbox[2],bbox[3]), (0,255,0), 5)
-            cv2.imwrite( '/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution/bbox_model/checkpoints_se50/vis/{0}{1}.png'.format(config.type, idx), kp_img)
-
         img_id.append(os.path.split(img_path)[1])
         pt_str = r''
         for i in range(4):
@@ -128,7 +120,4 @@ if __name__ == '__main__':
         y1.append(y1_)
 
     pd.DataFrame({'Image':img_id, 'x0':x0, 'y0':y0, 'x1':x1, 'y1':y1}).to_csv( '{}.csv'.format(name+'_bbox'), index=None)
-    pd.DataFrame({'key_id':img_id, 'word':keypoint_word}).to_csv( '{}.csv'.format(name+'_keypoint'), index=None)
-
-
 
