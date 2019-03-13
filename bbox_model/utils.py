@@ -484,22 +484,3 @@ def normalized_error(preds, targets, widths):
         return 0
     ne = np.sum(dist/widths * targets[:, 2]) / np.sum(targets[:, 2])
     return ne
-
-if __name__ == '__main__':
-    from kpda_parser import KPDA
-    from config import Config
-    import cv2
-    config = Config('trousers')
-    db_path = '/home/storage/lsy/fashion/FashionAI_Keypoint_Detection/'
-    kpda = KPDA(config, db_path, 'train')
-    for idx in range(kpda.size()):
-        img = cv2.imread(kpda.get_image_path(idx))  # BGR
-        # bboxes = [kpda.get_bbox(idx)]
-        # probs = [1.]
-        # draw_bbox(img, bboxes, probs, '/home/storage/lsy/fashion/tmp/%d.png' % idx)
-        keypoints = kpda.get_keypoints(idx)
-        if np.all(keypoints[:, 2]>0):
-            print(keypoints)
-            draw = draw_keypoints(img, keypoints)
-            cv2.imwrite('/home/storage/lsy/fashion/tmp/%d.png' % idx, draw)
-            break

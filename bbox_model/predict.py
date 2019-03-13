@@ -64,8 +64,8 @@ if __name__ == '__main__':
 
     val_kpda = KPDA(config, 'infer')
 
-    args.model = r'/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution/bbox_model/checkpoints_se50/kpt_whale_best_val.ckpt'
-    name = r'/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution/bbox_model/checkpoints_se50/se50_flip_test'
+    args.model = r'./se50_best_val.ckpt'
+    name = r'./se50_test'
 
     print('Testing: ' + config.type)
     print('Validation sample number: %d' % val_kpda.size())
