@@ -1,0 +1,26 @@
+<annotation>
+	<folder>test</folder>
+	<filename>b16373c75.jpg</filename>
+	<path>E:\whale\all\test\b16373c75.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>700</width>
+		<height>500</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>t</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>5</xmin>
+			<ymin>84</ymin>
+			<xmax>693</xmax>
+			<ymax>358</ymax>
+		</bndbox>
+	</object>
+</annotation>

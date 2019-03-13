@@ -1,0 +1,26 @@
+<annotation>
+	<folder>test</folder>
+	<filename>ecca098fb.jpg</filename>
+	<path>E:\whale\all\test\ecca098fb.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>795</width>
+		<height>530</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>t</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>16</xmin>
+			<ymin>169</ymin>
+			<xmax>668</xmax>
+			<ymax>358</ymax>
+		</bndbox>
+	</object>
+</annotation>
