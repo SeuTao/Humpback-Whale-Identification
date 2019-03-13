@@ -131,42 +131,6 @@ def load_CLASS_NAME():
 
     return label_dict, id_dict
 
-def new_split():
-    NoNW_num = 400
-    NW_num = 200
 
-    tmp = load_train_map()
-    print(len(tmp))
-
-    id_dict = {}
-    for item in tmp:
-        id = tmp[item][0]
-        if id not in id_dict:
-            id_dict[id] = [item]
-        else:
-            id_dict[id].append(item)
-
-    non_oneshot_list = []
-    for id in id_dict:
-        if len(id_dict[id]) > 1:
-            non_oneshot_list.append(id)
-    print(len(non_oneshot_list))
-
-    random.shuffle(non_oneshot_list)
-    val_path = PJ_DIR + r'/image_list/val4.txt'
-
-    f = open(val_path, 'w')
-    for i in range(NoNW_num):
-        id = non_oneshot_list[i]
-        random.shuffle(id_dict[id])
-        img = id_dict[id][0]
-        f.write(img + ' ' + str(id) + '\n')
-
-    for i in range(NW_num):
-        id = -1
-        random.shuffle(id_dict[id])
-        img = id_dict[id][0]
-        f.write(img + ' ' + str(id) + '\n')
-    f.close()
 
 
