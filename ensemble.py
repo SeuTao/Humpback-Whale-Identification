@@ -3,6 +3,7 @@ from process.data_helper import *
 SIGFIGS = 6
 
 id_name_label, dict_label = load_CLASS_NAME()
+
 dict_label['new_whale'] = -1
 id_name_label[-1] = 'new_whale'
 
@@ -77,7 +78,7 @@ def clalibrate_distribution(blend):
 
 def write_models(blend, file_name, is_top1 = False):
     with open( file_name + '.csv', 'w') as f:
-        f.write('image,id\n')
+        f.write('Image,Id\n')
         nc = 0
         for id, v in blend.items():
             if is_top1:
@@ -96,20 +97,22 @@ def write_models(blend, file_name, is_top1 = False):
 
 if __name__ == '__main__':
     model_pred = {
-        r'./models/resnet101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
-        r'./models/seresnet101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
-        r'./models/seresnext101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/resnet101_fold0_256_512/checkpoint/max_valid_model': 10,
+        r'./models/seresnet101_fold0_256_512/checkpoint/max_valid_model': 10,
+        r'./models/seresnext101_fold0_256_512/checkpoint/max_valid_model': 10,
 
-        r'./models/resnet101_fold0_pseudo_256_512/checkpoint/max_valid_model_heatmap':10,
-        r'./models/seresnet101_fold0_pseudo_256_512/checkpoint/max_valid_model_heatmap':10,
+        r'./models/resnet101_fold0_512_512/checkpoint/max_valid_model': 10,
+        r'./models/seresnet101_fold0_512_512/checkpoint/max_valid_model': 10,
 
-        r'./models/resnet101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
-        r'./models/seresnet101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
-        r'./models/seresnext101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/resnet101_fold0_pseudo_256_512/checkpoint/max_valid_model':20,
+        r'./models/seresnet101_fold0_pseudo_256_512/checkpoint/max_valid_model':20,
 
+        r'./models/resnet101_fold0_pseudo_512_512/checkpoint/max_valid_model': 20,
+        r'./models/seresnet101_fold0_pseudo_512_512/checkpoint/max_valid_model': 20,
+        r'./models/seresnext101_fold0_pseudo_512_512/checkpoint/max_valid_model': 20,
     }
 
-    thres =  0.18
+    thres =  0.185
     avg = read_models(model_pred, thres)
     avg, missing_ids = clalibrate_distribution(blend=avg)
-    csv_name = write_models(avg, '5pseudo_3net_thres_0.18_4082_2119_se50b', is_top1=False)
+    csv_name = write_models(avg, 'final_submission_id_4081_NW_2123', is_top1=False)

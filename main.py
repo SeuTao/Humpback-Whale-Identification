@@ -385,35 +385,35 @@ def run_infer(config):
     net = net.cuda()
     net.eval()
 
-    # valid_dataset = WhaleDataset('val', fold_index=0,
-    #                              image_size=image_size,
-    #                              augment=[0.0],
-    #                              is_flip=False)
-    #
-    # valid_loader  = DataLoader(valid_dataset,
-    #                            shuffle=False,
-    #                            batch_size  = batch_size,
-    #                            drop_last   = False,
-    #                            num_workers = 8,
-    #                            pin_memory  = True)
-    #
-    # valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
-    #                                   augment=[0.0],
-    #                                   is_flip=True)
-    #
-    # valid_loader_flip = DataLoader(valid_dataset_flip,
-    #                                shuffle=False,
-    #                                batch_size=batch_size,
-    #                                drop_last=False,
-    #                                num_workers=8,
-    #                                pin_memory=True)
-    #
-    #
-    # valid_loss = do_valid(net, valid_loader,  hard_ratio= 1 * 1e-2, is_flip=False)
-    # print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % ( valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
-    #
-    # valid_loss = do_valid(net, valid_loader_flip,  hard_ratio= 1 * 1e-2, is_flip=True)
-    # print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % (valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
+    valid_dataset = WhaleDataset('val', fold_index=0,
+                                 image_size=image_size,
+                                 augment=[0.0],
+                                 is_flip=False)
+
+    valid_loader  = DataLoader(valid_dataset,
+                               shuffle=False,
+                               batch_size  = batch_size,
+                               drop_last   = False,
+                               num_workers = 8,
+                               pin_memory  = True)
+
+    valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
+                                      augment=[0.0],
+                                      is_flip=True)
+
+    valid_loader_flip = DataLoader(valid_dataset_flip,
+                                   shuffle=False,
+                                   batch_size=batch_size,
+                                   drop_last=False,
+                                   num_workers=8,
+                                   pin_memory=True)
+
+
+    valid_loss = do_valid(net, valid_loader,  hard_ratio= 1 * 1e-2, is_flip=False)
+    print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % ( valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
+
+    valid_loss = do_valid(net, valid_loader_flip,  hard_ratio= 1 * 1e-2, is_flip=True)
+    print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % (valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
 
     # 2TTA
     augments = [[0.0],[1.0]]
@@ -447,7 +447,7 @@ def run_infer(config):
 
             probs += prob.data.cpu().numpy().tolist()
 
-        save_path = initial_checkpoint.replace('.pth','_heatmap')
+        save_path = initial_checkpoint.replace('.pth','')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 

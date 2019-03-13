@@ -75,13 +75,19 @@ def load_train_map(train_image_list_path = LIST_DIR + r'/train_image_list.txt'):
 
     return label_dict
 
-def load_bbox_dict( csv_origin = PJ_DIR + r'/process/bbox.csv'):
-    csv_origin = r'/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution/bbox_model/checkpoints_se50/se50_flip_test_bbox.csv'
-    print(csv_origin)
+def load_bbox_dict():
+
     bbox_dict = {}
-    labelName, x0, y0, x1, y1 = get_list(csv_origin)
-    for (name, x0_,y0_,x1_,y1_) in zip(labelName, x0,y0,x1,y1):
-        bbox_dict[name] = [x0_,y0_,x1_,y1_]
+    csv_origin = PJ_DIR + r'/bbox_model/se50_bbox.csv'
+    print(csv_origin)
+    _, x0_se50, y0_se50, x1_se50, y1_se50 = get_list(csv_origin)
+
+    csv_origin = PJ_DIR + r'/bbox_model/se101_bbox.csv'
+    print(csv_origin)
+    labelName, x0_se101, y0_se101, x1_se101, y1_se101 = get_list(csv_origin)
+    for (name, x0,y0,x1,y1,x0_,y0_,x1_,y1_) in zip(labelName, x0_se50,y0_se50,x1_se50,y1_se50,
+                                                              x0_se101,y0_se101,x1_se101,y1_se101):
+        bbox_dict[name] = [(x0+x0_)//2,(y0+y0_)//2,(x1+x1_)//2,(y1+y1_)//2]
     return bbox_dict
 
 def load_pseudo_list(path = LIST_DIR + r'/pseudo_list.txt'):

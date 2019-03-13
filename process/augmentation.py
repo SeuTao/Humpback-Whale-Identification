@@ -85,7 +85,7 @@ def aug_image(image, is_infer=False, augment = None):
             return image
 
     else:
-        # sometimes = lambda aug: iaa.Sometimes(0.5, aug)
+
         seq = iaa.Sequential([
             iaa.Affine(rotate= (-15, 15),
                        shear = (-15, 15),
