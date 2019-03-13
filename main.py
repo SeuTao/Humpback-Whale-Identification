@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,7"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,7"
 import argparse
 from utils import *
 from process.data import *
