@@ -76,6 +76,7 @@ def load_train_map(train_image_list_path = LIST_DIR + r'/train_image_list.txt'):
     return label_dict
 
 def load_bbox_dict( csv_origin = PJ_DIR + r'/process/bbox.csv'):
+    csv_origin = r'/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution/bbox_model/checkpoints_se50/se50_flip_test_bbox.csv'
     print(csv_origin)
     bbox_dict = {}
     labelName, x0, y0, x1, y1 = get_list(csv_origin)

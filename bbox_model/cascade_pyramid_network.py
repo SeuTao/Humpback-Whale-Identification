@@ -160,7 +160,7 @@ class RefineNet(nn.Module):
 def GlobalNet50(config, pretrained=False):
     return GlobalNet(config, Bottleneck, [3, 4, 6, 3], torchvision.models.resnet50(pretrained=pretrained))
 
-from bbox_model.backbone.senet import se_resnext50_32x4d, se_resnext101_32x4d
+from backbone.senet import se_resnext50_32x4d, se_resnext101_32x4d
 def GlobalSENet50(config, pretrained = True):
     return GlobalSENet(config, se_resnext50_32x4d())
 
@@ -176,9 +176,9 @@ def GlobalNet152(config, pretrained=False):
 class CascadePyramidNet(nn.Module):
     def __init__(self, config):
         super(CascadePyramidNet, self).__init__()
-        self.global_net = GlobalNet50(config, pretrained=True)
+        # self.global_net = GlobalNet50(config, pretrained=True)
         # self.global_net = GlobalSENet101(config, pretrained=True)
-        # self.global_net = GlobalSENet50(config, pretrained=True)
+        self.global_net = GlobalSENet50(config, pretrained=True)
         self.refine_net = RefineNet(config)
 
     def forward(self, x):

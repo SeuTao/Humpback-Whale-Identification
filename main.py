@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,7"
 import argparse
 from utils import *
 from process.data import *
@@ -368,14 +368,6 @@ def run_infer(config):
                             '_'+str(config.image_h)+ '_'+str(config.image_w)
 
     out_dir = os.path.join('./models/', config.model_name)
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-    if not os.path.exists(os.path.join(out_dir,'checkpoint')):
-        os.makedirs(os.path.join(out_dir,'checkpoint'))
-    if not os.path.exists(os.path.join(out_dir,'train')):
-        os.makedirs(os.path.join(out_dir,'train'))
-    if not os.path.exists(os.path.join(out_dir,'backup')):
-        os.makedirs(os.path.join(out_dir,'backup'))
 
     net = get_model(config.model, config)
     net = torch.nn.DataParallel(net)
@@ -393,35 +385,35 @@ def run_infer(config):
     net = net.cuda()
     net.eval()
 
-    valid_dataset = WhaleDataset('val', fold_index=0,
-                                 image_size=image_size,
-                                 augment=[0.0],
-                                 is_flip=False)
-
-    valid_loader  = DataLoader(valid_dataset,
-                               shuffle=False,
-                               batch_size  = batch_size,
-                               drop_last   = False,
-                               num_workers = 8,
-                               pin_memory  = True)
-
-    valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
-                                      augment=[0.0],
-                                      is_flip=True)
-
-    valid_loader_flip = DataLoader(valid_dataset_flip,
-                                   shuffle=False,
-                                   batch_size=batch_size,
-                                   drop_last=False,
-                                   num_workers=8,
-                                   pin_memory=True)
-
-
-    valid_loss = do_valid(net, valid_loader,  hard_ratio= 1 * 1e-2, is_flip=False)
-    print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % ( valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
-
-    valid_loss = do_valid(net, valid_loader_flip,  hard_ratio= 1 * 1e-2, is_flip=True)
-    print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % (valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
+    # valid_dataset = WhaleDataset('val', fold_index=0,
+    #                              image_size=image_size,
+    #                              augment=[0.0],
+    #                              is_flip=False)
+    #
+    # valid_loader  = DataLoader(valid_dataset,
+    #                            shuffle=False,
+    #                            batch_size  = batch_size,
+    #                            drop_last   = False,
+    #                            num_workers = 8,
+    #                            pin_memory  = True)
+    #
+    # valid_dataset_flip = WhaleDataset('val', fold_index=0, image_size=image_size,
+    #                                   augment=[0.0],
+    #                                   is_flip=True)
+    #
+    # valid_loader_flip = DataLoader(valid_dataset_flip,
+    #                                shuffle=False,
+    #                                batch_size=batch_size,
+    #                                drop_last=False,
+    #                                num_workers=8,
+    #                                pin_memory=True)
+    #
+    #
+    # valid_loss = do_valid(net, valid_loader,  hard_ratio= 1 * 1e-2, is_flip=False)
+    # print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % ( valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
+    #
+    # valid_loss = do_valid(net, valid_loader_flip,  hard_ratio= 1 * 1e-2, is_flip=True)
+    # print(' %0.5f  %0.5f  %0.5f  (%0.5f)' % (valid_loss[0], valid_loss[1], valid_loss[2], valid_loss[3]))
 
     # 2TTA
     augments = [[0.0],[1.0]]
@@ -455,7 +447,7 @@ def run_infer(config):
 
             probs += prob.data.cpu().numpy().tolist()
 
-        save_path = initial_checkpoint.replace('.pth','')
+        save_path = initial_checkpoint.replace('.pth','_heatmap')
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
@@ -474,10 +466,10 @@ def main(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--fold_index', type=int, default = 0)
-    parser.add_argument('--model', type=str, default='seresnet101')
+    parser.add_argument('--model', type=str, default='seresnext101')
     parser.add_argument('--batch_size', type=int, default=128)
 
-    parser.add_argument('--image_h', type=int, default=256)
+    parser.add_argument('--image_h', type=int, default=512)
     parser.add_argument('--image_w', type=int, default=512)
 
     parser.add_argument('--s1', type=float, default=64.0)
@@ -489,11 +481,12 @@ if __name__ == '__main__':
     parser.add_argument('--triplet_w', type=float, default=1.0)
 
     parser.add_argument('--is_pseudo', type=bool, default=True)
-    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
-    parser.add_argument('--pretrained_model', type=str, default=None)
 
-    # parser.add_argument('--mode', type=str, default='test_classifier', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
-    # parser.add_argument('--pretrained_model', type=str, default='max_valid_model.pth')
+    # parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
+    # parser.add_argument('--pretrained_model', type=str, default=None)
+
+    parser.add_argument('--mode', type=str, default='test', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
+    parser.add_argument('--pretrained_model', type=str, default='max_valid_model.pth')
 
     parser.add_argument('--iter_save_interval', type=int, default=5)
     parser.add_argument('--train_epoch', type=int, default=100)

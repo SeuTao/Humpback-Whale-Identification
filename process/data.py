@@ -37,7 +37,7 @@ class WhaleDataset(Dataset):
 
         if self.mode == 'train' or self.mode == 'train_list':
             self.train_list = load_train_list()
-            val_list =  read_txt(LIST_DIR + '/val'+str(self.fold_index)+'.txt')
+            val_list =  read_txt(LIST_DIR + '/new_val'+str(self.fold_index)+'.txt')
             print(LIST_DIR + '/val'+str(self.fold_index)+'.txt')
             val_set = set([tmp for tmp,_ in val_list])
             self.train_list = [tmp for tmp in self.train_list if tmp[0] not in val_set]
@@ -47,7 +47,7 @@ class WhaleDataset(Dataset):
             print('set dataset mode: train')
 
         elif self.mode == 'val':
-            self.val_list = read_txt(LIST_DIR + '/val'+str(self.fold_index)+'.txt')
+            self.val_list = read_txt(LIST_DIR + '/new_val'+str(self.fold_index)+'.txt')
             print(LIST_DIR + '/val'+str(self.fold_index)+'.txt')
             self.num_data = len(self.val_list)
             print('set dataset mode: val')

@@ -96,9 +96,20 @@ def write_models(blend, file_name, is_top1 = False):
 
 if __name__ == '__main__':
     model_pred = {
-        r'/data1/shentao/competitions/whale/models/seresnet101_final_loss_256X512_pseudo/checkpoint/max_valid_model': 10,
+        r'./models/resnet101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/seresnet101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/seresnext101_fold0_256_512/checkpoint/max_valid_model_heatmap': 10,
+
+        r'./models/resnet101_fold0_pseudo_256_512/checkpoint/max_valid_model_heatmap':10,
+        r'./models/seresnet101_fold0_pseudo_256_512/checkpoint/max_valid_model_heatmap':10,
+
+        r'./models/resnet101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/seresnet101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
+        r'./models/seresnext101_fold0_pseudo_512_512/checkpoint/max_valid_model_heatmap': 10,
+
     }
+
     thres =  0.18
     avg = read_models(model_pred, thres)
     avg, missing_ids = clalibrate_distribution(blend=avg)
-    csv_name = write_models(avg, 'thres_0.18_4066_2140', is_top1=False)
+    csv_name = write_models(avg, '5pseudo_3net_thres_0.18_4082_2119_se50b', is_top1=False)

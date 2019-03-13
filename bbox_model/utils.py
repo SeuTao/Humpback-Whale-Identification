@@ -22,7 +22,6 @@ class Logger(object):
         # you might want to specify some extra behavior here.
         pass
 
-
 def split4(data, max_stride, margin):
     splits = []
     data = torch.Tensor.numpy(data)
