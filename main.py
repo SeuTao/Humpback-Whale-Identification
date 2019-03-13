@@ -466,7 +466,7 @@ def main(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--fold_index', type=int, default = 0)
-    parser.add_argument('--model', type=str, default='seresnext101')
+    parser.add_argument('--model', type=str, default='resnet101')
     parser.add_argument('--batch_size', type=int, default=128)
 
     parser.add_argument('--image_h', type=int, default=512)
