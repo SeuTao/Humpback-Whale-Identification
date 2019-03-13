@@ -207,18 +207,6 @@ def run_train(config):
     start_iter = 0
 
     log.write('\n')
-    ## start training here! ##############################################
-    log.write('** top_n step 100,60,60,60 **\n')
-    log.write('** start training here! **\n')
-    log.write('                    |------------ VALID -------------|-------- TRAIN/BATCH ----------|         \n')
-    log.write('rate   iter  epoch  | loss   acc-1  acc-5   lb       | loss   acc-1  acc-5   lb      |  time   \n')
-    log.write('----------------------------------------------------------------------------------------------------\n')
-
-    print('** start training here! **\n')
-    print('                    |------------ VALID -------------|-------- TRAIN/BATCH ----------|         \n')
-    print('rate   iter  epoch  | loss   acc-1  acc-5   lb       | loss   acc-1  acc-5   lb      |  time   \n')
-    print('----------------------------------------------------------------------------------------------------\n')
-
     valid_loss   = np.zeros(6,np.float32)
     batch_loss   = np.zeros(6,np.float32)
 
