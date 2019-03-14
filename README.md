@@ -38,6 +38,8 @@ This is the source code for my part of the 2nd place solution to the [Humpback W
 |seresnext101_fold0_512x512|-|
 
 #### Single model performace with pseudo labeling
+I generate a pseudo label list containing 1.5k samples when I reached 0.940 in public LB, and I kept using this list till the competition ended. I used the bottleneck feature of the arcface model (my baseline model) to calculate cosine distance of train test images. For those few shot classes (less than 2 samples), I choose 0.65 as the threshold to filter high confidence samples.  I think it will be better result using 0.970 LB model to find pseudo label.
+
 | single model           | privare LB|
 | ---------------- |  ---- |
 |resnet101_fold0_256x512|0.9705|
