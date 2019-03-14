@@ -468,13 +468,13 @@ if __name__ == '__main__':
     parser.add_argument('--softmax_w', type=float, default=0.1)
     parser.add_argument('--triplet_w', type=float, default=1.0)
 
-    parser.add_argument('--is_pseudo', type=bool, default=False)
+    parser.add_argument('--is_pseudo', type=bool, default=True)
 
-    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
-    parser.add_argument('--pretrained_model', type=str, default=None)
-
-    # parser.add_argument('--mode', type=str, default='test', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
-    # parser.add_argument('--pretrained_model', type=str, default='max_valid_model.pth')
+    # parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
+    # parser.add_argument('--pretrained_model', type=str, default=None)
+    #
+    parser.add_argument('--mode', type=str, default='test', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
+    parser.add_argument('--pretrained_model', type=str, default='max_valid_model.pth')
 
     parser.add_argument('--iter_save_interval', type=int, default=5)
     parser.add_argument('--train_epoch', type=int, default=100)
