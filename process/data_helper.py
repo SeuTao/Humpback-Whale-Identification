@@ -1,6 +1,6 @@
 from include import *
 import pandas as pd
-from augmentation import *
+from process.augmentation import *
 
 PJ_DIR = r'/data1/shentao/Projects/Kaggle_Whale2019_2nd_place_solution'
 train_df = pd.read_csv('/data1/shentao/DATA/competitions/whale/train.csv')
