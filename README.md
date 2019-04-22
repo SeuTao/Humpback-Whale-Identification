@@ -4,7 +4,7 @@ This is the source code for my part of the 2nd place solution to the [Humpback W
 ![image](https://github.com/SeuTao/Kaggle_Whale2019_2nd_palce_solution/blob/master/png/whale.png)
 
 # End to End Whale Identification Model 
-
+![image](https://github.com/SeuTao/Kaggle_Whale2019_2nd_palce_solution/blob/master/png/whale_NET.png)
 ## Recent Update
 
 **`2019.03.13`**: code upload.
