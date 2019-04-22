@@ -434,8 +434,10 @@ def run_infer(config):
                 prob = prob[:, whale_id_num:]
 
             probs += prob.data.cpu().numpy().tolist()
-
-        save_path = initial_checkpoint.replace('.pth','')
+        if initial_checkpoint is not None:
+            save_path = initial_checkpoint.replace('.pth','')
+        else:
+        	save_path='./save_submission'
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
@@ -473,8 +475,8 @@ if __name__ == '__main__':
     # parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
     # parser.add_argument('--pretrained_model', type=str, default=None)
     #
-    parser.add_argument('--mode', type=str, default='test', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
-    parser.add_argument('--pretrained_model', type=str, default='max_valid_model.pth')
+    parser.add_argument('--mode', type=str, default='train', choices=['train', 'val','val_fold','test_classifier','test','test_fold'])
+    parser.add_argument('--pretrained_model', type=str, default=None)
 
     parser.add_argument('--iter_save_interval', type=int, default=5)
     parser.add_argument('--train_epoch', type=int, default=100)

@@ -1,6 +1,6 @@
-from imagenet_pretrain_model.senet import *
+from net.imagenet_pretrain_model.senet import *
 # from utils import *
-from MagrinLinear import *
+from net.MagrinLinear import *
 BatchNorm2d = nn.BatchNorm2d
 
 import torchvision.models as tvm
